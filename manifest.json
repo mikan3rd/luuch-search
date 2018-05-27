@@ -1,0 +1,30 @@
+{
+  "short_name": "YouTubeRank",
+  "name": "YouTubeランキング検索",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#001a3c",
+  "background_color": "#001a3c",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "type": "image/png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "favicon.ico",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "favicon.ico",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "favicon.ico",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
