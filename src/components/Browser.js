@@ -39,13 +39,16 @@ class Browser extends React.Component {
       scrolling,
     } = this.state;
 
+    let url = naviShop.urls.pc;
+    url = url.replace(/\?.+/, 'food/');
+
     return (
       <Page renderToolbar={this.renderToolbar}>
         <div className="c-browser__iframe__wrapper">
           <iframe
             id="browser-iframe"
             className="c-browser__iframe"
-            src={naviShop.urls.pc}
+            src={url}
             width={width}
             height={height}
             scrolling={scrolling}

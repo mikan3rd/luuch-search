@@ -3,7 +3,7 @@ import {is} from 'immutable';
 import uaparse from 'ua-parser-js';
 import {
   Page,
-  // Modal,
+  Modal,
   Carousel,
   CarouselItem,
   Button,
@@ -48,11 +48,9 @@ class ShopListPage extends React.Component {
   componentWillReceiveProps = (nextProps) => {
     const {
       params,
-      selectedCategory,
     } = this.props.index;
 
     const nextParams = nextProps.index.params;
-    const nextSelectedCategory = nextProps.index.selectedCategory;
 
     // paramsにその他の変更があった場合
     if (!is(nextParams, params)) {
@@ -61,10 +59,6 @@ class ShopListPage extends React.Component {
       this.props.getSearchResult({params: _params});
     }
 
-    if (nextSelectedCategory !== selectedCategory) {
-      this.props.changeValueOfParams({key: 'food', value: ""})
-      this.props.getFood({food_category: nextSelectedCategory})
-    }
   }
 
   componentDidMount = () => {
@@ -87,13 +81,13 @@ class ShopListPage extends React.Component {
   }
 
   setNavigationPosition = () => {
-    const selectedShop = this.props.index.searchResult.shop[this.state.selectedIndex];
+    const selectedShop = this.props.index.shopList[this.state.selectedIndex];
     this.props.changeValueForKey({key: 'naviShop',  value: selectedShop});
     this.props.navigator.pushPage({component: Navigation, key: 'Navigation'});
   }
 
   setBrowserShop = () => {
-    const selectedShop = this.props.index.searchResult.shop[this.state.selectedIndex];
+    const selectedShop = this.props.index.shopList[this.state.selectedIndex];
     this.props.changeValueForKey({key: 'naviShop',  value: selectedShop});
     this.props.navigator.pushPage({component: Browser, key: 'Browser'});
   }
@@ -129,10 +123,11 @@ class ShopListPage extends React.Component {
 
     this.props.changeValueForKey({key: 'params', value: params})
     this.props.getSearchResult({params: params.toJS()});
+    this.setState({isSideOpen: false})
   }
 
   failedGetCurrentPosition = (error) => {
-    this.props.changeValueForKey({key: 'isLoading', value: false});
+    this.props.changeValueForKey({key: 'isProgress', value: false});
   var errorMessage = {
   0: "原因不明のエラーが\n発生しました" ,
       1: "位置情報の取得が\n許可されませんでした\n\n位置情報の取得を\n許可してください" ,
@@ -146,11 +141,11 @@ class ShopListPage extends React.Component {
   }
 
   renderToolbar = () => {
-    const searchResult = this.props.index.searchResult;
+    const shopList = this.props.index.shopList;
     return (
         <Toolbar>
           <div className='center' style={{fontWeight: 'bold'}}>
-            {searchResult.shop.length > 0 ? `${searchResult.shop[0].small_area.name}付近のお店` : '見つかりませんでした'}
+            {shopList.length > 0 ? `${shopList[0].small_area.name}付近のお店` : '見つかりませんでした'}
           </div>
 
             <div className="right" style={{padding: '5px'}}>
@@ -203,12 +198,12 @@ class ShopListPage extends React.Component {
 
       const {
         params,
-        // isLoading,
-        // message,
-        searchResult,
-        foodCategory,
-        selectedCategory,
-        food,
+        isFoodLoading,
+        message,
+        shopList,
+        foodList,
+        // foodCategory,
+        // selectedCategory,
         isOpenModal,
         isToast,
       } = index;
@@ -258,11 +253,16 @@ class ShopListPage extends React.Component {
                     })}
                   </Select>
                 </div>
-                <ListHeader>カテゴリ（料理名を絞り込み）</ListHeader>
+                {/* <ListHeader>カテゴリ（料理名を絞り込み）</ListHeader>
                 <div className="p-index__side__select">
                   <Select
                     value={selectedCategory}
-                    onChange={(e) => changeValueForKey({key: 'selectedCategory', value: e.target.value})}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      this.props.getFood({food_category: value, loading: true});
+                      changeValueForKey({key: 'selectedCategory', value});
+                      changeValueOfParams({key: 'food', value: ""})
+                    }}
                   >
                     <option value="">なし</option>
                     {foodCategory.map((category, index) => {
@@ -271,20 +271,36 @@ class ShopListPage extends React.Component {
                       );
                     })}
                   </Select>
-                </div>
+                </div> */}
                 <ListHeader>料理名</ListHeader>
                 <div className="p-index__side__select">
                   <Select
                     value={params.get('food')}
-                    onChange={(e) => changeValueOfParams({key: 'food', value: e.target.value})}
+                    onChange={(e) => {
+                      changeValueOfParams({key: 'food', value: e.target.value});
+                      this.setState({isSideOpen: false})
+                    }}
                   >
                     <option value="">なし</option>
-                    {food.map((category, index) => {
+                    {foodList.map((category, index) => {
                       return (
                         <option key={index} value={category.code}>{category.name}</option>
                       );
                     })}
                   </Select>
+                </div>
+                <div className="p-index__side__contact__button">
+                  <Button
+                    className="p-index__side__contact__button__child"
+                    modifier="outline"
+                    onClick={() => {
+                      changeValueOfParams({key: 'food', value: foodList[Math.floor(Math.random() * foodList.length)].code});
+                      this.setState({isSideOpen: false});
+                    }}
+                    style={{textAlign: 'center'}}
+                  >
+                    <p className="p-index__side__contact__button__inner" style={{fontSize: '16px', fontWeight: 'bold'}} >Ottimo!!</p>
+                  </Button>
                 </div>
                 <ListHeader>再検索</ListHeader>
                 <div className="p-index__side__contact__button">
@@ -293,7 +309,7 @@ class ShopListPage extends React.Component {
                     onClick={() => this.getCurrentPosition()}
                     style={{textAlign: 'center'}}
                   >
-                    <p className="p-index__side__contact__button__inner">現在地を更新する</p>
+                    <p className="p-index__side__contact__button__inner">現在地を更新</p>
                   </Button>
                 </div>
                 <ListHeader>作者について</ListHeader>
@@ -314,17 +330,17 @@ class ShopListPage extends React.Component {
               </Page>
             </SplitterSide>
             <SplitterContent>
-              {/* <Modal
-              isOpen={isLoading}
-              animation="fade"
-            >
-              <div className="modal__body">
-                <p className="modal__message">{message}</p>
-                <div className="loading-modal">
-                  <div className="pac-man" />
+              <Modal
+                isOpen={isFoodLoading}
+                animation="fade"
+              >
+                <div className="modal__body">
+                  <p className="modal__message">{message}</p>
+                  <div className="loading-modal">
+                    <div className="pac-man" />
+                  </div>
                 </div>
-              </div>
-            </Modal> */}
+              </Modal>
               <Toast
                 isOpen={isToast}
               >
@@ -338,7 +354,7 @@ class ShopListPage extends React.Component {
               >
                 画面下の共有ボタン <Icon icon="ion-share" size={30} /> を押して{'\n'}
                 ホーム画面に追加 <Icon icon="fa-plus-square" size={30} /> すると{'\n'}
-                アプリをインストールできます
+                アプリをインストールできます（Safariのみ）
               </div>
               <Icon
                 icon="md-close"
@@ -354,7 +370,7 @@ class ShopListPage extends React.Component {
             <div className="p-index">
               <div className="c-shop-list-page">
                 <div style={{textAlign: 'center',fontSize: '20px', paddingTop: '20px'}}>
-                    {searchResult.shop.map((result, index) => (
+                    {shopList.map((result, index) => (
                         <span
                           key={index}
                           style={{cursor: 'pointer'}}
@@ -372,7 +388,7 @@ class ShopListPage extends React.Component {
                     overscrollable={true}
                     autoScrollRatio={0.1}
                 >
-                {searchResult.shop.map((result, index) => {
+                {shopList.map((result, index) => {
                     return (
                     <CarouselItem key={index}>
                         <div className="c-shop-list-page__card">
@@ -403,9 +419,9 @@ class ShopListPage extends React.Component {
                               <Button
                                 onClick={() => this.setBrowserShop()}
                                 modifier="quiet"
-                                style={{fontSize: '12px', marginBottom: '-10px', color: 'gray'}}
+                                style={{fontSize: '14px', marginBottom: '-10px', color: '#96523d'}}
                               >
-                                ホットペッパーグルメで見る
+                                メニューを見る
                               </Button>
                             </div>
                             <div className="c-shop-list-page__card__content__food-name">
@@ -420,7 +436,7 @@ class ShopListPage extends React.Component {
                 })}
                 </Carousel>
                 {/* <div className="c-shop-list-page__bottom">
-                  {searchResult.shop.length > 0 &&
+                  {shopList.length > 0 &&
                     <Button
                       className="c-shop-list-page__bottom__button"
                       modifier="large"

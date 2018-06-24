@@ -24,7 +24,11 @@ function* getSearchResult(action) : Generator<*, *, *> {
   const response = yield call(HotpepperApi.get, params);
 
   if (response.status === 200) {
-    yield put(Actions.changeValueForKey({key: 'searchResult', value: response.data.results}));
+    yield put(Actions.changeValueForKey({key: 'shopList', value: response.data.shop_list}));
+
+    if (!params.food) {
+      yield put(Actions.changeValueForKey({key: 'foodList', value: response.data.food_list}));
+    }
 
     if (navigator) {
       navigator.pushPage({component: ShopListPage, key: 'ShopListPage'});
@@ -44,17 +48,29 @@ function* getFoodCategory(action) {
 }
 
 function* getFood(action) : Generator<*, *, *> {
-  const params = action.payload;
-  const response = yield call(HotpepperApi.getFood, params);
-  if (response.status === 200) {
-    yield put(Actions.changeValueForKey({key: 'food', value: response.data.results.food}));
+  const {
+    food_category,
+    loading,
+  } = action.payload;
+
+  if (loading) {
+    yield put(Actions.changeValueForKey({key: 'message', value: '料理名を更新中...'}));
+    yield put(Actions.changeValueForKey({key: 'isFoodLoading', value: true}));
   }
+
+  const response = yield call(HotpepperApi.getFood, {food_category});
+  if (response.status === 200) {
+    yield put(Actions.changeValueForKey({key: 'foodList', value: response.data.food_list}));
+  }
+
+  yield put(Actions.changeValueForKey({key: 'isFoodLoading', value: false}));
+
 }
 
 
 function* sendStripeToken(action) : Generator<*, *, *> {
   yield put(Actions.changeValueForKey({key: 'isLoading', value: true}));
   const token = action.payload;
-  const response = yield call(ChargeApi.post, token);
+  yield call(ChargeApi.post, token);
   yield put(Actions.changeValueForKey({key: 'isLoading', value: false}));
 }

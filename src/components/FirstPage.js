@@ -13,7 +13,6 @@ class FirstPage extends React.Component {
 
     componentDidMount = () => {
       this.props.getFoodCategory();
-      this.props.getFood({food_category: null})
     }
 
     getCurrentPosition = () => {
@@ -26,6 +25,7 @@ class FirstPage extends React.Component {
       }
 
       this.props.changeValueForKey({key: 'message', value: '現在地を取得中...'});
+      this.props.changeValueForKey({key: 'isLoading', value: true});
 
       navigator.geolocation.getCurrentPosition(
         this.successGetCurrentPosition,

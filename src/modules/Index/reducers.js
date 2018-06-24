@@ -20,7 +20,8 @@ let params = Map({
 
 const IndexRecord = Record({
   params,
-  searchResult: null,
+  shopList: [],
+  foodList: [],
   isLoading: false,
   isProgress: false,
   message: '',
@@ -28,9 +29,9 @@ const IndexRecord = Record({
   naviShop: null,
   foodCategory: [],
   selectedCategory: "",
-  food: [],
   isOpenModal: false,
   isToast: false,
+  isFoodLoading: false,
 });
 
 class Index extends IndexRecord {
@@ -40,13 +41,6 @@ class Index extends IndexRecord {
 export default handleActions({
   [Actions.changeValueForKey]: (state, action) => {
     const {key, value} = action.payload;
-    if (key === 'message') {
-      return state.merge({
-        [key]: value,
-        'isLoading': true,
-      })
-    }
-
     return state.set(key, value);
   },
   [Actions.changeValueOfParams]: (state, action) => {
