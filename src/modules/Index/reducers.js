@@ -9,7 +9,6 @@ let params = Map({
   longitude: null,
   lunch: 1,
   range: "3",
-  food: "",
   wifi: 0,
 });
 // const searchParamsJson = localStorage.getItem('searchParams');

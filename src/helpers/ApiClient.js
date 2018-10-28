@@ -22,12 +22,10 @@ export default class ApiClient {
 
     headers = Object.assign({}, headers);
 
-    console.log(url);
-
     let options = {
-      url: url,
-      method: method,
-      headers: headers,
+      url,
+      method,
+      headers,
       responseType: 'json',
     };
 

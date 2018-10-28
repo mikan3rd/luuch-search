@@ -7,8 +7,6 @@ import ShopListPage from '../../components/ShopListPage';
 
 export default function* (): Generator<*, *, *> {
   yield takeLatest(Actions.getSearchResult, getSearchResult);
-  yield takeLatest(Actions.getFoodCategory, getFoodCategory);
-  yield takeLatest(Actions.getFood, getFood);
   yield takeLatest(Actions.sendStripeToken, sendStripeToken);
 }
 

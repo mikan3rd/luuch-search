@@ -272,7 +272,7 @@ class ShopListPage extends React.Component {
                     })}
                   </Select>
                 </div> */}
-                <ListHeader>料理名</ListHeader>
+                {/* <ListHeader>料理名</ListHeader>
                 <div className="p-index__side__select">
                   <Select
                     value={params.get('food')}
@@ -288,8 +288,8 @@ class ShopListPage extends React.Component {
                       );
                     })}
                   </Select>
-                </div>
-                <div className="p-index__side__contact__button">
+                </div> */}
+                {/* <div className="p-index__side__contact__button">
                   <Button
                     className="p-index__side__contact__button__child"
                     modifier="outline"
@@ -301,7 +301,7 @@ class ShopListPage extends React.Component {
                   >
                     <p className="p-index__side__contact__button__inner" style={{fontSize: '16px', fontWeight: 'bold'}} >Ottimo!!</p>
                   </Button>
-                </div>
+                </div> */}
                 <ListHeader>再検索</ListHeader>
                 <div className="p-index__side__contact__button">
                   <Button
@@ -424,9 +424,9 @@ class ShopListPage extends React.Component {
                                 メニューを見る
                               </Button>
                             </div>
-                            <div className="c-shop-list-page__card__content__food-name">
+                            {/* <div className="c-shop-list-page__card__content__food-name">
                               {result.food.name}
-                            </div>
+                            </div> */}
 
                           </div>
 
